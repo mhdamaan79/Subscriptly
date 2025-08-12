@@ -3,6 +3,7 @@ import authorize from "../middlewares/auth.middleware.js";
 import {
   createSubscription,
   getUserSubscriptions,
+  updateSubscriptions,
 } from "../controllers/subscription.controller.js";
 
 const subscriptionRouter = Router();
@@ -17,9 +18,7 @@ subscriptionRouter.get("/:id", (req, res) => {
 
 subscriptionRouter.post("/", authorize, createSubscription);
 
-subscriptionRouter.put("/:id", (req, res) => {
-  res.send({ title: "UPDATE subscriptions" });
-});
+subscriptionRouter.put("/user/:id", authorize, updateSubscriptions);
 
 subscriptionRouter.delete("/:id", (req, res) => {
   res.send({ title: "DELETE subscriptions" });
