@@ -66,6 +66,33 @@ export const updateSubscriptions = async (req, res, next) => {
   }
 };
 
+export const deleteSubscription = async (req, res, next) => {
+  try {
+    if (req.user.id !== req.params.id) {
+      const error = new Error("You are not the owner of this account");
+      error.status = 401;
+      throw error;
+    }
+
+    const subscriptions = await Subscription.find({ user: req.params.id });
+
+    if (!subscriptions || subscriptions.length === 0) {
+      const error = new Error("Subscription not found");
+      error.status = 404;
+      throw error;
+    }
+
+    await Subscription.deleteMany({ user: req.params.id });
+
+    res.status(200).json({
+      success: true,
+      message: `${subscriptions.length} subscription(s) deleted`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getUserSubscriptions = async (req, res, next) => {
   try {
     if (req.user.id !== req.params.id) {
@@ -98,7 +125,7 @@ export const cancelSubscription = async (req, res, next) => {
 
     const subscriptions = await Subscription.find({ user: req.params.id });
 
-    if (!subscriptions) {
+    if (!subscriptions || subscriptions.length === 0) {
       const error = new Error("Subscription not found");
       error.status = 404;
       throw error;
